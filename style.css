@@ -154,3 +154,54 @@ main{
     margin-left: auto;
     line-height: 1.6;
 }
+
+.btn{
+    display: inline-block;
+    list-style: none;
+    align-items: center;
+    padding: 14px 32px;
+    border-radius: 50px;
+    border: none;
+    transition: all 0.3s ;
+    cursor: pointer;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+
+.btn-primary{
+    background: var(--primary-dark);
+    color: whitesmoke;
+}
+
+.btn-primary:hover{
+    background: var(--primary-color);
+    color: #343434;
+}
+
+.section-titl{
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: -700;
+    margin-bottom: -48px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.about{
+    background: var(--bg-secondary);
+    padding-top: 40px;
+    padding-bottom: -100px;
+    text-align: center;
+}
+
+.about-content{
+    font-style: 18px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+}
+
+.about-content{
+    min-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
