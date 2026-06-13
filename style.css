@@ -1,4 +1,4 @@
-:root{
+ :root{
     --primary-color: #0891b2;
     --primary-dark: #0e7490;
     --primary-light: #06b6d4;
@@ -310,23 +310,6 @@ main{
     opacity: 1;
 }
 
-/* projects text block */
-.projects-text{
-    max-width: 700px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.projects-text p{
-    font-size: 18px;
-    color: var(--text-secondary);
-    line-height: 1.8;
-    margin-bottom: 24px;
-}
-
-.projects-text .btn{
-    margin-top: 24px;
-}
 
 /* Кастомное уведомление */
 .custom-notification{
@@ -360,6 +343,7 @@ main{
     max-width: 700px;
     margin: 0 auto;
     text-align: center;
+    margin-bottom: 40px;
 }
 
 .projects-text p{
@@ -368,6 +352,102 @@ main{
     line-height: 1.7;
     margin-bottom: 20px;
 }
+
+/* Projects Carousel */
+.projects-carousel {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    padding: 20px 30px;
+}
+
+.carousel-container {
+    overflow: visible;
+    border-radius: 16px;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.project-card {
+    min-width: calc(33.333% - 16px);
+    max-width: calc(33.333% - 16px);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.project-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px rgba(8, 145, 178, 0.2);
+    transform: translateY(-4px) scale(1.05);
+    z-index: 10;
+}
+
+
+.project-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.project-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.project-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.project-link {
+    display: inline-block;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.project-link:hover {
+    color: var(--primary-light);
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.carousel-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: var(--primary-color);
+    width: 30px;
+    border-radius: 5px;
+}
+
 
 .projects-text .btn{
     margin-top: 30px;
