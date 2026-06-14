@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Проекты — Никишин Владислав</title>
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo"><a href="index.html">Владислав Никишин</a></div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="about.html">Обо мне</a></li>
+                    <li><a href="skills.html">Навыки</a></li>
+                    <li><a href="projects.html" class="active">Проекты</a></li>
+                    <li><a href="contact.html">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-hero">
+            <div class="container">
+                <h1 class="page-title">Мои проекты</h1>
+            </div>
+        </section>
+
+        <section class="projects-page">
+            <div class="container">
+                <div class="projects-text">
+                    <p>Так как я учусь в IT-колледже (top-academy), мы постоянно делаем какие-то проекты. На парах с преподавателем или сами. Кто-то один делает, а бывает, что в паре или небольшой группкой собираемся.</p>
+                    <p>Сейчас в основном я стараюсь хранить свои проекты на GitHub, но я так стал делать только в последнее время. К сожалению, некоторые мои проекты, более старые, удалены, а некоторые хранятся только локально.</p>
+                </div>
+
+                <div class="projects-carousel" aria-label="Карусель проектов">
+                    <button class="carousel-btn carousel-btn--prev" type="button" aria-label="Предыдущие проекты">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="carousel-container">
+                        <div class="carousel-track">
+                            <a href="https://github.com/V0idW0llker/stroyinvest-k" class="project-card" target="_blank" rel="noopener">
+                                <div class="project-icon">🏗️</div>
+                                <h3 class="project-title">stroyinvest-k</h3>
+                                <p class="project-desc">Сайт для строительной компании <em>StroyInvest-K</em>. Современный дизайн, адаптивная верстка.</p>
+                                <p class="project-stack"><span>Стек:</span> Django, Python, HTML, CSS, JavaScript</p>
+                            </a>
+
+                            <a href="https://github.com/V0idW0llker/Chess-Game" class="project-card" target="_blank" rel="noopener">
+                                <div class="project-icon">♟️</div>
+                                <h3 class="project-title">Chess-Game ("Chess of War")</h3>
+                                <p class="project-desc">Локальная многопользовательская игра в шахматы с сетевым режимом. Полноценная логика игры, удобный интерфейс.</p>
+                                <p class="project-stack"><span>Стек:</span> C# (.NET)</p>
+                            </a>
+
+                            <a href="https://github.com/V0idW0llker/inthernet_portfolio" class="project-card" target="_blank" rel="noopener">
+                                <div class="project-icon">💼</div>
+                                <h3 class="project-title">portfolio_tipa</h3>
+                                <p class="project-desc">Персональный сайт-портфолио. Минималистичный стиль, плавные анимации, быстрая загрузка.</p>
+                                <p class="project-stack"><span>Стек:</span> HTML, CSS, JavaScript</p>
+                            </a>
+
+                            <a href="https://github.com/V0idW0llker/Inversiy_demo" class="project-card" target="_blank" rel="noopener">
+                                <div class="project-icon">👕</div>
+                                <h3 class="project-title">Inversiy_demo</h3>
+                                <p class="project-desc">Демо-версия интернет-магазина одежды. Каталог товаров, корзина, фильтрация.</p>
+                                <p class="project-stack"><span>Стек:</span> HTML, CSS, JavaScript</p>
+                            </a>
+
+                            <a href="https://github.com/Expos1tor/Veyra-Altura" class="project-card" target="_blank" rel="noopener">
+                                <div class="project-icon">⌚</div>
+                                <h3 class="project-title">Veyra-Altura <span class="project-badge">участие ограничено</span></h3>
+                                <p class="project-desc">Виджет для отслеживания времени на устройстве. Участие в проекте было частичным — детали стека и архитектуры неизвестны.</p>
+                            </a>
+                        </div>
+                    </div>
+
+                    <button class="carousel-btn carousel-btn--next" type="button" aria-label="Следующие проекты">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="https://github.com/V0idW0llker?tab=repositories" class="btn btn-primary" target="_blank" rel="noopener">
+                        Смотреть все проекты на GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Никишин Владислав. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

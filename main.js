@@ -112,18 +112,20 @@ if (carouselTrack && carouselContainer) {
         const cardWidth = getCardWidth();
         const threshold = cardWidth * 0.2;
         const offset = dragOffset;
-        dragOffset = 0;
-
-        if (offset < -threshold) {
-            prevSlide();
-        } else if (offset > threshold) {
-            nextSlide();
+        
+        if (Math.abs(offset) > threshold) {
+            dragOffset = 0;
+            if (offset < -threshold) {
+                prevSlide();
+            } else if (offset > threshold) {
+                nextSlide();
+            }
         } else {
-            goToSlide(currentIndex, true);
-        }
-
-        if (wasDragged) {
-            blockCardClick = true;
+            // Don't snap back - stay exactly where user left it
+            dragOffset = offset;
+            setTransition(true);
+            applyTransform(currentIndex, dragOffset);
+            dragOffset = 0;
         }
     }
 
@@ -161,6 +163,8 @@ if (carouselTrack && carouselContainer) {
 
     carouselContainer.addEventListener('mousedown', (e) => {
         if (e.button !== 0) return;
+        // Don't start drag when clicking on cards (links) to allow link clicks
+        if (e.target.closest('.project-card')) return;
         e.preventDefault();
         onDragStart(e.clientX);
     });
@@ -209,37 +213,7 @@ if (carouselTrack && carouselContainer) {
         });
     }
 
-    carouselTrack.addEventListener('click', (e) => {
-        if (blockCardClick) {
-            blockCardClick = false;
-            wasDragged = false;
-            return;
-        }
-
-        const card = e.target.closest('.project-card');
-        if (!card) return;
-
-        if (e.target.closest('.project-link--external')) return;
-
-        const href = card.dataset.href;
-        if (href) {
-            e.preventDefault();
-            window.open(href, '_blank', 'noopener');
-        }
-    });
-
-    carouselTrack.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter' && e.key !== ' ') return;
-
-        const card = e.target.closest('.project-card');
-        if (!card || e.target.closest('.project-link--external')) return;
-
-        e.preventDefault();
-        const href = card.dataset.href;
-        if (href) {
-            window.open(href, '_blank', 'noopener');
-        }
-    });
+    // Cards are now real <a> tags, so no need for JavaScript click handler
 
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -280,15 +254,29 @@ function showNotification(message) {
     const oldNotification = document.querySelector('.custom-notification');
     if (oldNotification) oldNotification.remove();
 
+    const oldBackdrop = document.querySelector('.backdrop-overlay');
+    if (oldBackdrop) oldBackdrop.remove();
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'backdrop-overlay';
+    document.body.appendChild(backdrop);
+
     const notification = document.createElement('div');
     notification.className = 'custom-notification';
     notification.innerHTML = message;
     document.body.appendChild(notification);
 
-    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.add('show');
+        backdrop.classList.add('show');
+    }, 10);
 
     setTimeout(() => {
         notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
+        backdrop.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+            backdrop.remove();
+        }, 300);
     }, 1000);
 }
