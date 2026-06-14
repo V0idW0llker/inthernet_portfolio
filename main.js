@@ -1,136 +1,257 @@
 // Слайдер проектов
 const carouselTrack = document.querySelector('.carousel-track');
 const carouselContainer = document.querySelector('.carousel-container');
-const indicatorsContainer = document.querySelector('.carousel-indicators');
+const prevBtn = document.querySelector('.carousel-btn--prev');
+const nextBtn = document.querySelector('.carousel-btn--next');
 
-if (carouselTrack && carouselContainer && indicatorsContainer) {
-    const cards = document.querySelectorAll('.project-card');
-    const totalCards = cards.length;
+if (carouselTrack && carouselContainer) {
+    const originalCards = [...carouselTrack.querySelectorAll('.project-card')];
+    const totalOriginal = originalCards.length;
+
+    originalCards.forEach((card) => {
+        carouselTrack.appendChild(card.cloneNode(true));
+    });
+
+    const cards = carouselTrack.querySelectorAll('.project-card');
     let currentIndex = 0;
     let autoScrollInterval;
     let isPaused = false;
-    
-    // Настройки слайдера
-    const cardsPerView = 3;
+    let isDragging = false;
+    let wasDragged = false;
+    let blockCardClick = false;
+    let dragStartX = 0;
+    let dragOffset = 0;
+    let transitionEnabled = true;
+
     const autoScrollDelay = 3000;
-    
-    // Создаем индикаторы
-    function createIndicators() {
-        const maxIndicators = totalCards - cardsPerView + 1;
-        for (let i = 0; i < maxIndicators; i++) {
-            const indicator = document.createElement('div');
-            indicator.className = 'carousel-indicator' + (i === 0 ? ' active' : '');
-            indicator.addEventListener('click', () => goToSlide(i));
-            indicatorsContainer.appendChild(indicator);
-        }
-    }
-    
-    // Получаем ширину одной карточки с отступом
+    const dragThreshold = 8;
+
     function getCardWidth() {
-        return cards[0].offsetWidth + 20; // ширина карточки + gap
+        return cards[0].offsetWidth + 24;
     }
-    
-    // Переход к конкретному слайду
-    function goToSlide(index) {
-        const maxIndex = totalCards - cardsPerView;
-        currentIndex = Math.max(0, Math.min(index, maxIndex));
-        
-        const translateX = -(currentIndex * getCardWidth());
+
+    function setTransition(enabled) {
+        transitionEnabled = enabled;
+        carouselTrack.style.transition = enabled ? 'transform 0.5s ease-in-out' : 'none';
+    }
+
+    function applyTransform(index, offset = 0) {
+        const translateX = -(index * getCardWidth()) + offset;
         carouselTrack.style.transform = `translateX(${translateX}px)`;
-        
-        // Обновляем индикаторы
-        const indicators = document.querySelectorAll('.carousel-indicator');
-        indicators.forEach((ind, i) => {
-            ind.classList.toggle('active', i === currentIndex);
-        });
     }
-    
-    // Следующий слайд (зацикленный)
-    function nextSlide() {
-        const maxIndex = totalCards - cardsPerView;
-        if (currentIndex >= maxIndex) {
-            currentIndex = 0; // Зацикливаем - возвращаемся к началу
-        } else {
-            currentIndex++;
+
+    function goToSlide(index, animate = true) {
+        setTransition(animate);
+        currentIndex = index;
+        applyTransform(currentIndex);
+    }
+
+    function normalizeIndex() {
+        if (currentIndex >= totalOriginal) {
+            currentIndex = 0;
+            goToSlide(0, false);
+        } else if (currentIndex < 0) {
+            currentIndex = totalOriginal - 1;
+            goToSlide(currentIndex, false);
         }
-        goToSlide(currentIndex);
     }
-    
-    // Автоматическая прокрутка (в одну сторону)
+
+    function nextSlide() {
+        currentIndex++;
+        goToSlide(currentIndex, true);
+    }
+
+    function prevSlide() {
+        if (currentIndex <= 0) {
+            currentIndex = totalOriginal;
+            goToSlide(currentIndex, false);
+            requestAnimationFrame(() => {
+                currentIndex--;
+                goToSlide(currentIndex, true);
+            });
+            return;
+        }
+
+        currentIndex--;
+        goToSlide(currentIndex, true);
+    }
+
+    carouselTrack.addEventListener('transitionend', (e) => {
+        if (e.propertyName !== 'transform') return;
+
+        if (currentIndex >= totalOriginal) {
+            currentIndex = 0;
+            goToSlide(0, false);
+        }
+    });
+
     function startAutoScroll() {
-        stopAutoScroll(); // Очистить предыдущий интервал
+        stopAutoScroll();
         autoScrollInterval = setInterval(() => {
-            if (!isPaused) {
+            if (!isPaused && !isDragging) {
                 nextSlide();
             }
         }, autoScrollDelay);
     }
-    
-    // Остановка автоматической прокрутки
+
     function stopAutoScroll() {
         if (autoScrollInterval) {
             clearInterval(autoScrollInterval);
         }
     }
-    
-    // Пауза при наведении на карточку
-    carouselContainer.addEventListener('mouseenter', () => {
+
+    function pauseAutoScroll() {
         isPaused = true;
-    });
-    
-    carouselContainer.addEventListener('mouseleave', () => {
+    }
+
+    function resumeAutoScroll() {
         isPaused = false;
-    });
-    
-    // Свайп для мобильных устройств
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    carouselContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        stopAutoScroll();
-    }, { passive: true });
-    
-    carouselContainer.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-        startAutoScroll();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // Свайп влево - следующий слайд
-                nextSlide();
-            } else {
-                // Свайп вправо - предыдущий слайд
-                const maxIndex = totalCards - cardsPerView;
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    goToSlide(currentIndex);
-                }
-            }
+    }
+
+    function snapAfterDrag() {
+        const cardWidth = getCardWidth();
+        const threshold = cardWidth * 0.2;
+        const offset = dragOffset;
+        dragOffset = 0;
+
+        if (offset < -threshold) {
+            prevSlide();
+        } else if (offset > threshold) {
+            nextSlide();
+        } else {
+            goToSlide(currentIndex, true);
+        }
+
+        if (wasDragged) {
+            blockCardClick = true;
         }
     }
-    
-    // Обработка изменения размера окна
+
+    function onDragStart(clientX) {
+        isDragging = true;
+        wasDragged = false;
+        dragStartX = clientX;
+        dragOffset = 0;
+        setTransition(false);
+        stopAutoScroll();
+        carouselContainer.classList.add('is-dragging');
+    }
+
+    function onDragMove(clientX) {
+        if (!isDragging) return;
+
+        dragOffset = clientX - dragStartX;
+
+        if (Math.abs(dragOffset) > dragThreshold) {
+            wasDragged = true;
+        }
+
+        applyTransform(currentIndex, dragOffset);
+    }
+
+    function onDragEnd() {
+        if (!isDragging) return;
+
+        isDragging = false;
+        carouselContainer.classList.remove('is-dragging');
+        setTransition(true);
+        snapAfterDrag();
+        startAutoScroll();
+    }
+
+    carouselContainer.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        onDragStart(e.clientX);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        onDragMove(e.clientX);
+    });
+
+    window.addEventListener('mouseup', () => {
+        onDragEnd();
+    });
+
+    carouselContainer.addEventListener('touchstart', (e) => {
+        onDragStart(e.touches[0].clientX);
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        onDragMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchend', () => {
+        onDragEnd();
+    }, { passive: true });
+
+    carouselContainer.addEventListener('mouseenter', pauseAutoScroll);
+    carouselContainer.addEventListener('mouseleave', () => {
+        if (!isDragging) {
+            resumeAutoScroll();
+        }
+    });
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            stopAutoScroll();
+            startAutoScroll();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            stopAutoScroll();
+            startAutoScroll();
+        });
+    }
+
+    carouselTrack.addEventListener('click', (e) => {
+        if (blockCardClick) {
+            blockCardClick = false;
+            wasDragged = false;
+            return;
+        }
+
+        const card = e.target.closest('.project-card');
+        if (!card) return;
+
+        if (e.target.closest('.project-link--external')) return;
+
+        const href = card.dataset.href;
+        if (href) {
+            e.preventDefault();
+            window.open(href, '_blank', 'noopener');
+        }
+    });
+
+    carouselTrack.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+
+        const card = e.target.closest('.project-card');
+        if (!card || e.target.closest('.project-link--external')) return;
+
+        e.preventDefault();
+        const href = card.dataset.href;
+        if (href) {
+            window.open(href, '_blank', 'noopener');
+        }
+    });
+
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            goToSlide(currentIndex);
+            normalizeIndex();
+            goToSlide(currentIndex, false);
         }, 100);
     });
-    
-    // Инициализация
-    createIndicators();
+
     startAutoScroll();
-    
-    // Пересчет при изменении размера
-    setTimeout(() => goToSlide(0), 100);
+    setTimeout(() => goToSlide(0, false), 100);
 }
 
 console.log('Сайт-визитка Никишина Владислава');
@@ -139,43 +260,35 @@ console.log('Сайт-визитка Никишина Владислава');
 const discordBtn = document.getElementById('discord-btn');
 const discordTag = '___Vladislav___';
 
-discordBtn.addEventListener('click', () => {
-    // Копируем тег в буфер обмена
-    navigator.clipboard.writeText(discordTag).then(() => {
-        // Показываем кастомное уведомление
-        showNotification('<b>Discord-тег скопирован:</b> ' + discordTag + '\n');
-        
-        // Через 1 секунду закрываем уведомление и переходим на Discord
-        setTimeout(() => {
+if (discordBtn) {
+    discordBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(discordTag).then(() => {
+            showNotification('<b>Discord-тег скопирован:</b> ' + discordTag + '\n');
+
+            setTimeout(() => {
+                window.open('https://discord.com/app', '_blank');
+            }, 1000);
+        }).catch(err => {
+            console.error('Не удалось скопировать:', err);
+            alert('Тег: ' + discordTag);
             window.open('https://discord.com/app', '_blank');
-        }, 1000);
-    }).catch(err => {
-        console.error('Не удалось скопировать:', err);
-        alert('Тег: ' + discordTag);
-        window.open('https://discord.com/app', '_blank');
+        });
     });
-});
+}
 
-
-// Функция для показа уведомления
 function showNotification(message) {
-    // Убираем старое уведомление если есть
     const oldNotification = document.querySelector('.custom-notification');
     if (oldNotification) oldNotification.remove();
-    
-    // Создаём уведомление
+
     const notification = document.createElement('div');
     notification.className = 'custom-notification';
-    notification.innerHTML = message; // используем innerHTML для поддержки HTML-тегов
+    notification.innerHTML = message;
     document.body.appendChild(notification);
-    
-    // Показываем с анимацией
+
     setTimeout(() => notification.classList.add('show'), 10);
-    
-    // Скрываем через 1 секунду
+
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
     }, 1000);
 }
-
