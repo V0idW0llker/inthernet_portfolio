@@ -172,6 +172,39 @@ main{
     position: relative;
 }
 
+/* Фоновая аватарка */
+.hero-bg-avatar {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 1000px;
+    background: url('images/glav-avatar.jpg') center center / cover no-repeat;
+    opacity: 0.10;
+    z-index: 0;
+    filter: blur(1px);
+    pointer-events: none;
+}
+
+.hero-avatar {
+    margin-bottom: 32px;
+}
+
+.hero-avatar img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 32px rgba(8, 145, 178, 0.2);
+    transition: all 0.3s ease;
+}
+
+.hero-avatar img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(8, 145, 178, 0.35);
+}
+
 .hero-title{
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 800;
@@ -637,4 +670,219 @@ main{
 .footer p{
     font-size: 14px;
     color: var(--text-muted);
+}
+
+/* ===== Новые стили для страницы "Обо мне" ===== */
+
+.profile-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(8, 145, 178, 0.1) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 48px;
+    backdrop-filter: blur(10px);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-avatar-img {
+    font-size: 56px;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 16px rgba(8, 145, 178, 0.3);
+}
+
+.profile-info h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.profile-tagline {
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.15);
+}
+
+.detail-icon {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+
+.detail-item div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Секция "Обо мне" */
+.about-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.about-section .section-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.about-section h3 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.about-section p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 16px;
+}
+
+.about-section p:last-child {
+    margin-bottom: 0;
+}
+
+/* Сетка информационных карточек */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 48px;
+}
+
+.info-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.info-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(8, 145, 178, 0.2);
+}
+
+.info-card:hover::before {
+    opacity: 1;
+}
+
+.info-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+}
+
+.info-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.info-card p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Выделенная карточка */
+.info-card--highlight {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(8, 145, 178, 0.15) 100%);
+    border-color: var(--primary-color);
+}
+
+.info-card--highlight::before {
+    opacity: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-details {
+        grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 }

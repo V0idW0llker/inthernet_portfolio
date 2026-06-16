@@ -31,22 +31,98 @@
 
         <section class="about-page">
             <div class="container">
-                <div class="about-content">
-                    <p>Студент Московского университета "ИТ-ТОП". По характеру очень терпеливый и сдержанный — могу долго разбираться с задачей, не срываясь и не бросая на полпути.</p>
-                    <p>Усидчивый, если надо сидеть и разбираться с кодом несколько часов — без проблем. Плюс умею понятно объяснять сложные вещи даже тем, кто вообще не в теме, поэтому в командной работе со мной комфортно. Работаю один, в паре или втроём/вчетвером — не теряюсь.</p>
+                <!-- Личная информация -->
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <img src="images/avatar.jpg" alt="Никишин Владислав" class="profile-avatar-img">
+                        <div class="profile-info">
+                            <h2>Никишин Владислав Евгеньевич</h2>
+                            <p class="profile-tagline">IT-студент из Новосибирска</p>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">🎂</span>
+                            <div>
+                                <span class="detail-label">Дата рождения</span>
+                                <span class="detail-value">11 сентября 2004</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <div>
+                                <span class="detail-label">Возраст</span>
+                                <span class="detail-value" id="age-display">Загрузка...</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📍</span>
+                            <div>
+                                <span class="detail-label">Город</span>
+                                <span class="detail-value">Новосибирск</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">💼</span>
+                            <div>
+                                <span class="detail-label">Статус</span>
+                                <span class="detail-value" id="status-display">Загрузка...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="education">
-            <div class="container">
-                <h2 class="section-title">Образование</h2>
-                <div class="education-content">
-                    <div class="education-item">
-                        <h3>ИТ-ТОП</h3>
-                        <p class="education-school">Московский университет</p>
-                        <p class="education-period">2023 — настоящее время</p>
-                        <p class="education-desc">Программирование, веб-разработка, работа с базами данных</p>
+                <!-- Образование -->
+                <div class="info-card" style="margin-top: 24px;">
+                    <div class="info-icon">🎓</div>
+                    <h3>Образование</h3>
+                    <p><strong>IT-колледж top-academy</strong> — разнопрофильное IT-образование</p>
+                    <p style="color: var(--text-muted); font-size: 14px;">2023 — 2027 (ожидаемый год окончания)</p>
+                    <p>Обучение идёт по разным IT-направлениям — программирование, веб-разработка, базы данных, алгоритмы. В процессе получения широкого профиля IT-специалиста.</p>
+                </div>
+
+                <div class="info-grid">
+                    <!-- Обо мне -->
+                    <div class="info-card">
+                        <div class="info-icon">🧑‍🎓</div>
+                        <h3>Обо мне</h3>
+                        <p>Студент IT-колледжа top-academy. По характеру терпеливый и сдержанный — если задача требует времени, я спокойно разберусь в ней, не бросая на полпути.</p>
+                        <p>Могу часами сидеть и разбираться с кодом, а если нужно — легко объясню сложные вещи понятным языком. В работе не боюсь и одиночной работы, и командной — в паре, втроём или вчетвером чувствую себя уверенно.</p>
+                    </div>
+
+                    <!-- Опыт -->
+                    <div class="info-card">
+                        <div class="info-icon">🚀</div>
+                        <h3>Опыт</h3>
+                        <p>За время учёбы принял участие в ряде учебных и личных проектов — как в одиночку, так и в команде. Работаю с GitHub, умею взаимодействовать с другими разработчиками и адаптируюсь к любому формату работы.</p>
+                    </div>
+
+                    <!-- Интересы -->
+                    <div class="info-card">
+                        <div class="info-icon">💡</div>
+                        <h3>Интересы</h3>
+                        <p>Меня по-настоящему увлекают современные технологии и изобретения — особенно то, что скоро станет реальностью. Отдельный интерес — искусственный интеллект и то, как он меняет мир вокруг нас.</p>
+                    </div>
+
+                    <!-- Цели -->
+                    <div class="info-card">
+                        <div class="info-icon">🎯</div>
+                        <h3>Цели</h3>
+                        <p>Хочу глубоко изучать языки программирования и уверенно владеть ими. Планирую расти как разработчик и в будущем работать в сфере, которая действительно увлекает.</p>
+                    </div>
+
+                    <!-- Хобби -->
+                    <div class="info-card">
+                        <div class="info-icon">⚡</div>
+                        <h3>Хобби и увлечения</h3>
+                        <p>Когда не учусь — занимаюсь спортом, прохожу дополнительные курсы и работаю над своими проектами. Вот, например, этот сайт — я начал его ещё на парах с преподавателем, но мы успели только начать. Дальше доделывал и развивал уже самостоятельно — это полностью моя инициатива.</p>
+                    </div>
+
+                    <!-- Предпочтения по работе -->
+                    <div class="info-card info-card--highlight">
+                        <div class="info-icon">💼</div>
+                        <h3>Предпочтения по работе</h3>
+                        <p>Рассматриваю только удалённую работу. Предпочитаю задачи без общения с клиентами — а вот взаимодействие с командой и работодателем — в самый раз.</p>
                     </div>
                 </div>
             </div>

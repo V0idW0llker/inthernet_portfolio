@@ -280,3 +280,39 @@ function showNotification(message) {
         }, 300);
     }, 1000);
 }
+
+// Динамический расчёт возраста и статуса
+function updatePersonalInfo() {
+    const birthDate = new Date(2004, 8, 11); // 11 сентября 2004 (месяцы 0-11)
+    const now = new Date();
+    
+    let age = now.getFullYear() - birthDate.getFullYear();
+    const monthDiff = now.getMonth() - birthDate.getMonth();
+    const dayDiff = now.getDate() - birthDate.getDate();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+    
+    const ageDisplay = document.getElementById('age-display');
+    if (ageDisplay) {
+        ageDisplay.textContent = age + ' ' + getAgeWord(age);
+    }
+    
+    const statusDisplay = document.getElementById('status-display');
+    if (statusDisplay) {
+        statusDisplay.textContent = 'Студент, безработный — ищу работу';
+    }
+}
+
+function getAgeWord(age) {
+    const lastTwoDigits = age % 100;
+    const lastDigit = lastTwoDigits % 10;
+    
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return 'лет';
+    if (lastDigit === 1) return 'год';
+    if (lastDigit >= 2 && lastDigit <= 4) return 'года';
+    return 'лет';
+}
+
+updatePersonalInfo();
