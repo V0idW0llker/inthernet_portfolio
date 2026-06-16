@@ -115,7 +115,9 @@ main{
 
 /* Page hero for multi-page site */
 .page-hero{
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, #1a2d47 50%, var(--bg-secondary) 100%);
+    background-size: 200% 200%;
+    animation: bg-shift 4s ease-in-out infinite;
     padding: 60px 0;
     text-align: center;
     border-bottom: 1px solid var(--border-color);
@@ -153,6 +155,15 @@ main{
     min-height: calc(100vh - 120px);
     position: relative;
     overflow: hidden;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #132238 50%, var(--bg-primary) 100%);
+    background-size: 200% 200%;
+    animation: bg-shift 5s ease-in-out infinite;
+}
+
+@keyframes bg-shift {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
 }
 
 .hero::before{
@@ -170,21 +181,6 @@ main{
     text-align: center;
     z-index: 1;
     position: relative;
-}
-
-/* Фоновая аватарка */
-.hero-bg-avatar {
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1000px;
-    height: 1000px;
-    background: url('images/glav-avatar.jpg') center center / cover no-repeat;
-    opacity: 0.10;
-    z-index: 0;
-    filter: blur(1px);
-    pointer-events: none;
 }
 
 .hero-avatar {
@@ -209,10 +205,22 @@ main{
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 800;
     margin-bottom: 24px;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
+    background: linear-gradient(90deg, #d1dce8, var(--primary-light), #d1dce8);
+    background-size: 200% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    animation: shimmer 8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -100% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -100% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 .hero-subtitle{
