@@ -121,11 +121,9 @@ if (carouselTrack && carouselContainer) {
                 nextSlide();
             }
         } else {
-            // Don't snap back - stay exactly where user left it
-            dragOffset = offset;
-            setTransition(true);
-            applyTransform(currentIndex, dragOffset);
             dragOffset = 0;
+            setTransition(true);
+            applyTransform(currentIndex, 0);
         }
     }
 
@@ -229,6 +227,26 @@ if (carouselTrack && carouselContainer) {
 }
 
 console.log('Сайт-визитка Никишина Владислава');
+
+// Бургер-меню
+const burgerBtn = document.querySelector('.burger-btn');
+const navMenu = document.querySelector('.nav-menu');
+
+if (burgerBtn && navMenu) {
+    burgerBtn.addEventListener('click', () => {
+        const isOpen = burgerBtn.classList.toggle('open');
+        navMenu.classList.toggle('open');
+        burgerBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            burgerBtn.classList.remove('open');
+            navMenu.classList.remove('open');
+            burgerBtn.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
 
 // Копирование Discord-тега при клике
 const discordBtn = document.getElementById('discord-btn');

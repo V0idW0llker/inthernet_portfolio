@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор аватарки</title>
+    <style>
+        :root {
+            --primary: #0891b2;
+            --primary-dark: #0e7490;
+            --primary-light: #06b6d4;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 36px 20px 60px;
+            gap: 24px;
+        }
+
+        /* ── Header ── */
+        header { text-align: center; }
+        header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        header p { font-size: 13px; color: var(--muted); }
+
+        /* ── Инструкция ── */
+        .instructions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--muted);
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary-dark);
+            color: var(--text);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* ── Layout ── */
+        .layout {
+            display: flex;
+            gap: 36px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        /* ── Preview ── */
+        .preview-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        #circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--primary);
+            box-shadow: 0 8px 32px rgba(8,145,178,.35), 0 0 60px rgba(8,145,178,.2);
+            cursor: grab;
+            position: relative;
+            user-select: none;
+            touch-action: none;
+        }
+
+        #circle.dragging { cursor: grabbing; }
+
+        #circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform-origin: center center;
+            pointer-events: none;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .preview-labels {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .preview-hint { font-size: 12px; color: var(--muted); }
+
+        .hover-badge {
+            font-size: 11px;
+            background: rgba(8,145,178,.2);
+            color: var(--primary-light);
+            border: 1px solid var(--primary-dark);
+            border-radius: 4px;
+            padding: 2px 7px;
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .hover-badge.visible { opacity: 1; }
+
+        /* ── Controls ── */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            flex: 1;
+            min-width: 260px;
+            max-width: 340px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .card-title.accent { color: var(--primary-light); }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2px 0;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .row label {
+            font-size: 13px;
+            color: var(--muted);
+            width: 72px;
+            flex-shrink: 0;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover { background: var(--primary-light); }
+
+        .badge {
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--primary-light);
+            width: 52px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .badge.hover-color { color: #a78bfa; }
+
+        /* ── Buttons ── */
+        .btn-row { display: flex; gap: 8px; }
+
+        .btn {
+            flex: 1;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all .2s ease;
+        }
+
+        .btn:hover { border-color: var(--primary); background: rgba(8,145,178,.1); }
+        .btn-primary { background: var(--primary-dark); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary); }
+
+        /* ── CSS Output ── */
+        .css-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .css-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .css-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+        #copiedBadge {
+            font-size: 12px;
+            color: var(--success);
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        #copiedBadge.show { opacity: 1; }
+
+        pre {
+            font-family: "Consolas", "Fira Code", monospace;
+            font-size: 13px;
+            color: var(--primary-light);
+            background: rgba(0,0,0,.4);
+            border-radius: 8px;
+            padding: 14px 16px;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        pre .comment { color: #475569; }
+        pre .hover-line { color: #a78bfa; }
+
+        .hint { font-size: 12px; color: var(--muted); line-height: 1.6; }
+        .hint strong { color: var(--text); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Редактор аватарки</h1>
+    <p>Настрой как выглядит логотип в кружке на главной странице</p>
+</header>
+
+<!-- Инструкция -->
+<div class="instructions">
+    <div class="step">
+        <div class="step-num">1</div>
+        Перетащи картинку в кружке мышью — двигает логотип
+    </div>
+    <div class="step">
+        <div class="step-num">2</div>
+        Колёсико мыши на кружке — приближение и отдаление
+    </div>
+    <div class="step">
+        <div class="step-num">3</div>
+        Слайдер «Hover» — масштаб при наведении на сайте
+    </div>
+    <div class="step">
+        <div class="step-num">4</div>
+        Нажми «Скопировать CSS» и вставь в style.css
+    </div>
+</div>
+
+<div class="layout">
+
+    <!-- Preview -->
+    <div class="preview-wrap">
+        <div id="circle">
+            <img id="avatar" src="images/avatar%20V.png" alt="avatar" draggable="false">
+        </div>
+        <div class="preview-labels">
+            <span class="preview-hint">200×200 · как на сайте</span>
+            <span class="hover-badge" id="hoverBadge">hover</span>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+
+        <div class="card">
+            <div class="card-title">Положение и масштаб</div>
+
+            <div class="row">
+                <label>Масштаб</label>
+                <input type="range" id="sSlider" min="0.3" max="6" step="0.01" value="1.45">
+                <span class="badge" id="sVal">×1.45</span>
+            </div>
+
+            <div class="row">
+                <label>Сдвиг X</label>
+                <input type="range" id="xSlider" min="-300" max="300" step="1" value="0">
+                <span class="badge" id="xVal">0px</span>
+            </div>
+
+            <div class="row">
+                <label>Сдвиг Y</label>
+                <input type="range" id="ySlider" min="-300" max="300" step="1" value="0">
+                <span class="badge" id="yVal">0px</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card-title accent">При наведении курсора (hover)</div>
+
+            <div class="row">
+                <label>Hover zoom</label>
+                <input type="range" id="hSlider" min="0.3" max="6" step="0.01" value="2.0">
+                <span class="badge hover-color" id="hVal">×2.00</span>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn" id="resetBtn">Сбросить</button>
+            <button class="btn btn-primary" id="copyBtn">Скопировать CSS</button>
+        </div>
+        <span id="copiedBadge">✓ Скопировано в буфер обмена</span>
+    </div>
+</div>
+
+<!-- CSS Output -->
+<div class="css-block">
+    <div class="css-header">
+        <span class="css-label">Готовый CSS → вставить в style.css</span>
+        <span id="copiedBadge2" style="font-size:12px;color:var(--success);opacity:0;transition:opacity .3s"></span>
+    </div>
+    <pre id="cssOut"></pre>
+    <p class="hint">
+        Открой <strong>style.css</strong>, найди блоки
+        <strong>.hero-avatar img</strong> и <strong>.hero-avatar:hover img</strong>
+        — замени строку <strong>transform</strong> в каждом.
+    </p>
+</div>
+
+<script>
+    const circle      = document.getElementById('circle');
+    const avatar      = document.getElementById('avatar');
+    const sSlider     = document.getElementById('sSlider');
+    const xSlider     = document.getElementById('xSlider');
+    const ySlider     = document.getElementById('ySlider');
+    const hSlider     = document.getElementById('hSlider');
+    const sVal        = document.getElementById('sVal');
+    const xVal        = document.getElementById('xVal');
+    const yVal        = document.getElementById('yVal');
+    const hVal        = document.getElementById('hVal');
+    const cssOut      = document.getElementById('cssOut');
+    const copiedBadge = document.getElementById('copiedBadge');
+    const hoverBadge  = document.getElementById('hoverBadge');
+
+    let s  = 1.45;
+    let tx = 0;
+    let ty = 0;
+    let hs = 2.0;
+    let isHovering = false;
+
+    let dragging = false;
+    let dragX0 = 0, dragY0 = 0, txAtDrag = 0, tyAtDrag = 0;
+
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    function applyTransform(scale) {
+        avatar.style.transform       = `translate(${tx}px, ${ty}px) scale(${scale})`;
+        avatar.style.transformOrigin = 'center center';
+    }
+
+    function render() {
+        s  = clamp(s,  0.3, 6);
+        tx = clamp(tx, -300, 300);
+        ty = clamp(ty, -300, 300);
+        hs = clamp(hs, 0.3, 6);
+
+        applyTransform(isHovering ? hs : s);
+
+        sSlider.value = s;
+        xSlider.value = tx;
+        ySlider.value = ty;
+        hSlider.value = hs;
+
+        sVal.textContent = `×${s.toFixed(2)}`;
+        xVal.textContent = `${Math.round(tx)}px`;
+        yVal.textContent = `${Math.round(ty)}px`;
+        hVal.textContent = `×${hs.toFixed(2)}`;
+
+        const txR = Math.round(tx), tyR = Math.round(ty);
+        cssOut.innerHTML =
+`<span class="comment">/* .hero-avatar img */</span>
+transform: translate(${txR}px, ${tyR}px) scale(${s.toFixed(2)});
+transform-origin: center center;
+
+<span class="comment">/* .hero-avatar:hover img */</span>
+<span class="hover-line">transform: translate(${txR}px, ${tyR}px) scale(${hs.toFixed(2)});</span>`;
+    }
+
+    // ── hover preview ──
+    circle.addEventListener('mouseenter', () => {
+        if (dragging) return;
+        isHovering = true;
+        hoverBadge.classList.add('visible');
+        applyTransform(hs);
+    });
+
+    circle.addEventListener('mouseleave', () => {
+        isHovering = false;
+        hoverBadge.classList.remove('visible');
+        applyTransform(s);
+    });
+
+    // ── mouse drag ──
+    circle.addEventListener('mousedown', e => {
+        if (e.button !== 0) return;
+        dragging = true;
+        isHovering = false;
+        dragX0   = e.clientX; dragY0   = e.clientY;
+        txAtDrag = tx;        tyAtDrag = ty;
+        circle.classList.add('dragging');
+        e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        tx = txAtDrag + (e.clientX - dragX0);
+        ty = tyAtDrag + (e.clientY - dragY0);
+        render();
+    });
+
+    window.addEventListener('mouseup', () => {
+        dragging = false;
+        circle.classList.remove('dragging');
+    });
+
+    // ── touch drag ──
+    circle.addEventListener('touchstart', e => {
+        const t = e.touches[0];
+        dragging = true;
+        dragX0   = t.clientX; dragY0   = t.clientY;
+        txAtDrag = tx;        tyAtDrag = ty;
+        e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        const t = e.touches[0];
+        tx = txAtDrag + (t.clientX - dragX0);
+        ty = tyAtDrag + (t.clientY - dragY0);
+        render();
+    });
+
+    window.addEventListener('touchend', () => { dragging = false; });
+
+    // ── wheel zoom ──
+    circle.addEventListener('wheel', e => {
+        e.preventDefault();
+        s += e.deltaY > 0 ? -0.08 : 0.08;
+        render();
+    }, { passive: false });
+
+    // ── sliders ──
+    sSlider.addEventListener('input', () => { s  = parseFloat(sSlider.value); render(); });
+    xSlider.addEventListener('input', () => { tx = parseInt(xSlider.value);   render(); });
+    ySlider.addEventListener('input', () => { ty = parseInt(ySlider.value);   render(); });
+    hSlider.addEventListener('input', () => { hs = parseFloat(hSlider.value); render(); });
+
+    // ── buttons ──
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        s = 1; tx = 0; ty = 0; hs = 1.2; render();
+    });
+
+    function showCopied(el) {
+        el.textContent = '✓ Скопировано!';
+        el.style.opacity = 1;
+        setTimeout(() => { el.style.opacity = 0; }, 2500);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        const text = cssOut.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            showCopied(copiedBadge);
+        });
+    });
+
+    render();
+</script>
+</body>
+</html>
